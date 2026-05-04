@@ -1,4 +1,3 @@
-# ===================== IMPORTS =====================
 import numpy as np
 import matplotlib.pyplot as plt
 from sympy import symbols, sympify, lambdify, diff
@@ -10,7 +9,7 @@ def format_function(func_str):
         return func_str
 
 
-# ===================== #plotter =====================
+# ===================== plotter =====================
 class Plotter:
     def __init__(self):
         self.x_sym = symbols('x')
@@ -40,10 +39,10 @@ class Plotter:
             plt.show()
 
         except Exception as e:
-            print(f"❌ Error plotting function: {e}")
+            print(f"Error plotting function: {e}")
 
 
-# ===================== #derivative =====================
+# ===================== derivative =====================
 class Derivative:
     def __init__(self):
         self.x_sym = symbols('x')
@@ -98,10 +97,10 @@ class Derivative:
             plt.show()
 
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"Error: {e}")
 
 
-# ===================== #integral =====================
+# ===================== integral =====================
 class Integral:
     def __init__(self):
         self.x_sym = symbols('x')
@@ -160,7 +159,7 @@ class Integral:
             print(f"Error: {e}")
 
 
-# ===================== #areas =====================
+# ===================== areas =====================
 class Areas:
     def __init__(self):
         self.x_sym = symbols('x')
