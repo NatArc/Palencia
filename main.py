@@ -40,7 +40,7 @@ class Plotter:
             plt.show()
 
         except Exception as e:
-            print(f"Error plotting function: {e}")
+            print(f"❌ Error plotting function: {e}")
 
 
 # ===================== #derivative =====================
@@ -78,15 +78,15 @@ class Derivative:
 
             plt.figure(figsize=(12, 8))
 
-            plt.plot(x_vals, y_vals, 'red', linewidth=3, label='Original')
-            plt.plot(x_vals, y_deriv, 'green', linewidth=3, label="Slope (Numerical)")
+            plt.plot(x_vals, y_vals, 'red', linewidth=3, label='Original Function')
+            plt.plot(x_vals, y_deriv, 'green', linewidth=3, label="Derivation")
 
             plt.axhline(0, color='white', alpha=0.4)
             plt.axvline(0, color='white', alpha=0.4)
             plt.grid(True, alpha=0.3)
 
             plt.title(
-                f"Function (red) | Slope (green) | Slope Area ≈ {area_deriv:.3f}",
+                f"Function | Derivation | Area ≈ {area_deriv:.3f}",
                 fontsize=13, color='white'
             )
 
@@ -98,7 +98,7 @@ class Derivative:
             plt.show()
 
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"❌ Error: {e}")
 
 
 # ===================== #integral =====================
@@ -134,7 +134,7 @@ class Integral:
             plt.figure(figsize=(12, 8))
 
             plt.plot(x_vals, y_vals, 'red', linewidth=3, label='Function')
-            plt.plot(x_vals, y_integral, 'blue', linewidth=3, label='Accumulation')
+            plt.plot(x_vals, y_integral, 'blue', linewidth=3, label='Integration')
 
             total_area = y_integral[-1] - y_integral[0]
 
@@ -145,7 +145,7 @@ class Integral:
             plt.grid(True, alpha=0.3)
 
             pretty = format_function(func_str)
-            plt.title(f"Function (red) + Accumulation (blue) | Total = {total_area:.3f}", color='white')
+            plt.title(f"Function + Integration | Total = {total_area:.3f}", color='white')
 
             plt.xlabel('X-axis', color='white')
             plt.ylabel('Values', color='white')
@@ -154,7 +154,7 @@ class Integral:
             plt.tight_layout()
             plt.show()
             
-            print(f"Total accumulation from {x_min} to {x_max}: {total_area:.4f}")
+            print(f"Total integration from {x_min} to {x_max}: {total_area:.4f}")
 
         except Exception as e:
             print(f"Error: {e}")
@@ -211,7 +211,7 @@ class Areas:
             plt.plot(x_vals, f_prime, 'green', linewidth=3, label="Derivation")
             plt.plot(x_vals, f_int, 'blue', linewidth=3, label='Integration')
 
-            title_text = "Function (red), Derivation (green), Integration (blue)"
+            title_text = "Function, Derivation, Integration"
 
             if a is not None and b is not None:
                 mask = (x_vals >= a) & (x_vals <= b)
