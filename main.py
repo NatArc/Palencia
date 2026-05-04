@@ -1,15 +1,21 @@
 # ===================== IMPORTS =====================
 import numpy as np
 import matplotlib.pyplot as plt
-from sympy import symbols, sympify, lambdify
+from sympy import symbols, sympify, lambdify, diff
+
+def format_function(func_str):
+    try:
+        return str(sympify(func_str))
+    except:
+        return func_str
 
 
 # ===================== #plotter =====================
 class Plotter:
     def __init__(self):
         self.x_sym = symbols('x')
-        plt.style.use('dark_background')
-        plt.rcParams['figure.facecolor'] = 'black'
+        plt.style.use('grayscale')
+        plt.rcParams['figure.facecolor'] = '#333333'
     
     def plot_function(self, func_str, x_min=-10, x_max=10):
         try:
@@ -22,26 +28,26 @@ class Plotter:
             y_vals = np.nan_to_num(y_vals, nan=0.0)
 
             plt.figure(figsize=(12, 8))
-            plt.plot(x_vals, y_vals, 'cyan', linewidth=3, label=f'f(x) = {func_str}')
-            plt.axhline(0, color='gray', alpha=0.5)
-            plt.axvline(0, color='gray', alpha=0.5)
+            plt.plot(x_vals, y_vals, 'red', linewidth=3, label=f'Graph: {func_str}')
+            plt.axhline(0, color='white', alpha=0.4)
+            plt.axvline(0, color='white', alpha=0.4)
             plt.grid(True, alpha=0.3)
-            plt.title(f'f(x) = {func_str}', fontsize=16, pad=20, color='white')
-            plt.xlabel('x', fontsize=14, color='white')
-            plt.ylabel('f(x)', fontsize=14, color='white')
+            plt.title(f'Graph of {func_str}', fontsize=16, pad=20, color='white')
+            plt.xlabel('X-axis', fontsize=14, color='white')
+            plt.ylabel('Y-values', fontsize=14, color='white')
             plt.legend()
             plt.tight_layout()
             plt.show()
 
         except Exception as e:
-            print(f"❌ Error plotting function: {e}")
+            print(f"Error plotting function: {e}")
 
 
 # ===================== #derivative =====================
 class Derivative:
     def __init__(self):
         self.x_sym = symbols('x')
-        plt.style.use('dark_background')
+        plt.style.use('grayscale')
     
     def numerical_derivative(self, func_np, x_vals):
         h = x_vals[1] - x_vals[0]
@@ -54,6 +60,11 @@ class Derivative:
     def plot_with_derivative(self, func_str, x_min=-10, x_max=10):
         try:
             func_sym = sympify(func_str)
+            deriv_sym = diff(func_sym, self.x_sym)
+
+            pretty_f = str(func_sym)
+            pretty_df = str(deriv_sym)
+
             func_np = lambdify(self.x_sym, func_sym, modules=['numpy'])
             
             x_vals = np.linspace(x_min, x_max, 1000)
@@ -63,34 +74,38 @@ class Derivative:
             y_vals = np.nan_to_num(y_vals, nan=0.0)
             y_deriv = np.nan_to_num(y_deriv, nan=0.0)
             
+            area_deriv = np.trapezoid(np.abs(y_deriv), x_vals)
+
             plt.figure(figsize=(12, 8))
 
-            plt.plot(x_vals, y_vals, 'cyan', linewidth=3, label=f'f(x) = {func_str}')
-            plt.plot(x_vals, y_deriv, 'lime', linewidth=3, label="f'(x)")
+            plt.plot(x_vals, y_vals, 'red', linewidth=3, label='Original')
+            plt.plot(x_vals, y_deriv, 'green', linewidth=3, label="Slope (Numerical)")
 
-            plt.axhline(0, color='gray', alpha=0.5)
-            plt.axvline(0, color='gray', alpha=0.5)
+            plt.axhline(0, color='white', alpha=0.4)
+            plt.axvline(0, color='white', alpha=0.4)
             plt.grid(True, alpha=0.3)
 
-            plt.title("f(x) (cyan) and f'(x) (lime)", fontsize=14, color='white')
-            plt.xlabel('x', color='white')
-            plt.ylabel('y', color='white')
+            plt.title(
+                f"Function (red) | Slope (green) | Slope Area ≈ {area_deriv:.3f}",
+                fontsize=13, color='white'
+            )
+
+            plt.xlabel('X-axis', color='white')
+            plt.ylabel('Values', color='white')
 
             plt.legend()
             plt.tight_layout()
-            area_deriv = np.trapezoid(np.abs(y_deriv), x_vals)
-            plt.title(f"f(x) (cyan) and f'(x) (lime) | Area ≈ {area_deriv:.3f}", color='white')
             plt.show()
 
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"Error: {e}")
 
 
 # ===================== #integral =====================
 class Integral:
     def __init__(self):
         self.x_sym = symbols('x')
-        plt.style.use('dark_background')
+        plt.style.use('grayscale')
     
     def numerical_integral(self, func_np, x_vals):
         y_vals = func_np(x_vals)
@@ -118,45 +133,38 @@ class Integral:
             
             plt.figure(figsize=(12, 8))
 
-            # lines
-            plt.plot(x_vals, y_vals, 'cyan', linewidth=3, label=f'f(x)')
-            plt.plot(x_vals, y_integral, 'gold', linewidth=3, label='∫f(x)dx')
+            plt.plot(x_vals, y_vals, 'red', linewidth=3, label='Function')
+            plt.plot(x_vals, y_integral, 'blue', linewidth=3, label='Accumulation')
 
-            # 🔥 compute area
             total_area = y_integral[-1] - y_integral[0]
 
-            # 🔥 OPTIONAL: shade area under f(x)
-            plt.fill_between(x_vals, 0, y_vals, alpha=0.2, color='cyan')
+            plt.fill_between(x_vals, 0, y_vals, alpha=0.2, color='red')
 
-            plt.axhline(0, color='gray', alpha=0.5)
-            plt.axvline(0, color='gray', alpha=0.5)
+            plt.axhline(0, color='white', alpha=0.4)
+            plt.axvline(0, color='white', alpha=0.4)
             plt.grid(True, alpha=0.3)
 
-            # 🔥 FIX: show area in title
-            plt.title(
-                f"f(x) (cyan) and ∫f(x)dx (gold) | Area ≈ {total_area:.3f}",
-                fontsize=14,
-                color='white'
-            )
+            pretty = format_function(func_str)
+            plt.title(f"Function (red) + Accumulation (blue) | Total = {total_area:.3f}", color='white')
 
-            plt.xlabel('x', color='white')
-            plt.ylabel('y', color='white')
+            plt.xlabel('X-axis', color='white')
+            plt.ylabel('Values', color='white')
 
             plt.legend()
             plt.tight_layout()
             plt.show()
             
-            print(f"Total definite integral from {x_min} to {x_max}: {total_area:.4f}")
+            print(f"Total accumulation from {x_min} to {x_max}: {total_area:.4f}")
 
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"Error: {e}")
 
 
 # ===================== #areas =====================
 class Areas:
     def __init__(self):
         self.x_sym = symbols('x')
-        plt.style.use('dark_background')
+        plt.style.use('grayscale')
     
     def numerical_derivative(self, func_np, x_vals):
         h = x_vals[1] - x_vals[0]
@@ -199,58 +207,54 @@ class Areas:
             
             plt.figure(figsize=(14, 8))
 
-            # Plot lines
-            plt.plot(x_vals, f_x, 'cyan', linewidth=3, label='f(x)')
-            plt.plot(x_vals, f_prime, 'lime', linewidth=3, label="f'(x)")
-            plt.plot(x_vals, f_int, 'gold', linewidth=3, label='∫f(x)dx')
+            plt.plot(x_vals, f_x, 'red', linewidth=3, label='Function')
+            plt.plot(x_vals, f_prime, 'green', linewidth=3, label="Derivation")
+            plt.plot(x_vals, f_int, 'blue', linewidth=3, label='Integration')
 
-            title_text = "f(x) (cyan), f'(x) (lime), ∫f(x)dx (gold)"
+            title_text = "Function (red), Derivation (green), Integration (blue)"
 
             if a is not None and b is not None:
                 mask = (x_vals >= a) & (x_vals <= b)
 
-                # Areas
                 area_f = np.trapezoid(f_x[mask], x_vals[mask])
                 area_p = np.trapezoid(np.abs(f_prime[mask]), x_vals[mask])
                 area_i = self.definite_integral_value(f_int, a, b, x_vals)
 
-                # Shading
-                plt.fill_between(x_vals[mask], 0, f_x[mask], alpha=0.3, color='cyan')
-                plt.fill_between(x_vals[mask], 0, np.abs(f_prime[mask]), alpha=0.3, color='lime')
-                plt.fill_between(x_vals[mask], 0, f_int[mask], alpha=0.3, color='gold')
+                plt.fill_between(x_vals[mask], 0, f_x[mask], alpha=0.3, color='red')
+                plt.fill_between(x_vals[mask], 0, np.abs(f_prime[mask]), alpha=0.3, color='green')
+                plt.fill_between(x_vals[mask], 0, f_int[mask], alpha=0.3, color='blue')
 
-                # Vertical bounds
                 plt.axvline(a, color='white', linestyle='--', alpha=0.6)
                 plt.axvline(b, color='white', linestyle='--', alpha=0.6)
 
-                # Update title with values
+                pretty = format_function(func_str)
+
                 title_text = (
-                    f"f(x) Area={area_f:.3f} (cyan) | "
-                    f"f'(x) Area={area_p:.3f} (lime) | "
-                    f"∫f(x)={area_i:.3f} (gold)"
+                    f"Function Area={area_f:.3f} | "
+                    f"Derivation Area={area_p:.3f} | "
+                    f"Integration Area={area_i:.3f}"
                 )
 
-                # Console output
-                print("\nAreas Summary:")
-                print(f" Bounds [{a}, {b}]:")
-                print(f"   f(x):    {area_f:.4f}")
-                print(f"   f'(x):   {area_p:.4f}")
-                print(f"   ∫f(x):   {area_i:.4f}")
+                print("\nArea Summary:")
+                print(f" Interval [{a}, {b}]:")
+                print(f"   Function:  {area_f:.4f}")
+                print(f"   Derivation:     {area_p:.4f}")
+                print(f"   Integration:     {area_i:.4f}")
 
-            plt.axhline(0, color='gray', alpha=0.3)
-            plt.axvline(0, color='gray', alpha=0.3)
+            plt.axhline(0, color='white', alpha=0.3)
+            plt.axvline(0, color='white', alpha=0.3)
             plt.grid(True, alpha=0.3)
 
             plt.title(title_text, fontsize=13, color='white')
-            plt.xlabel('x', color='white')
-            plt.ylabel('y', color='white')
+            plt.xlabel('X-axis', color='white')
+            plt.ylabel('Y-values', color='white')
 
             plt.legend()
             plt.tight_layout()
             plt.show()
 
         except Exception as e:
-            print(f"❌ Mode 4 Error: {e}")
+            print(f"Mode 4 Error: {e}")
 
 # ===================== MAIN =====================
 def get_x_range():
@@ -262,27 +266,27 @@ def get_x_range():
             if len(parts) == 1: return float(parts[0])-10, float(parts[0])+10
             elif len(parts) == 2: return float(parts[0]), float(parts[1])
         except:
-            print("❌ Examples: '-5 5', '0 10', '2'")
+            print("Examples: '-5 5', '0 10', '2'")
             continue
 
 def get_area_range():
     while True:
-        a_input = input("Area bounds a b (Enter for full range): ").strip()
+        a_input = input("Area : ").strip()
         if not a_input: return None, None
         try:
             parts = a_input.replace(',', ' ').split()
             return float(parts[0]), float(parts[1])
         except:
-            print("❌ Examples: '0 2', '-1 3'")
+            print("Examples: '0 2', '-1 3'")
             continue
 
 def main():
-    print("Calculus-Powered Graph")
-    print("1: f(x)")
-    print("2: f(x) + f'(x)")
-    print("3: f(x) + ∫f(x)")
-    print("4: All Graphs + Shaded Areas")
-    print("0: Exit")
+    print("Calculus Graph")
+    print("1: Function")
+    print("2: Function + Derivative")
+    print("3: Function + Integral")
+    print("4: Function + Derivative + Integrals")
+    print("5: Quit")
     
     plotter = Plotter()
     deriv = Derivative()
@@ -313,7 +317,7 @@ def main():
             a, b = get_area_range()
             areas.plot_all_with_areas(func, x_min, x_max, a, b)
         else:
-            print("❌ 1,2,3,4 or 0")
+            print("1,2,3,4 or 0")
 
 if __name__ == "__main__":
     main()
