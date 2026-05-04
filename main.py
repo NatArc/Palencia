@@ -295,8 +295,8 @@ def main():
     while True:
         choice = input("\nChoose (1/2/3/4/0): ").strip()
         
-        if choice == '0':
-            print("Bye!")
+        if choice == '5':
+            print("You Exited")
             break
             
         func = input("f(x): ").strip()
@@ -320,3 +320,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
