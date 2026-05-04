@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 from sympy import symbols, sympify, lambdify, diff
@@ -32,7 +31,7 @@ class Plotter:
             plt.axhline(0, color='white', alpha=0.4)
             plt.axvline(0, color='white', alpha=0.4)
             plt.grid(True, alpha=0.3)
-            plt.title(f'Graph of {func_str}', fontsize=16, pad=20, color='white')
+            plt.title(f'f(x) = {func_str}', fontsize=16, pad=20, color='white')
             plt.xlabel('X-axis', fontsize=14, color='white')
             plt.ylabel('Y-values', fontsize=14, color='white')
             plt.legend()
@@ -271,7 +270,7 @@ def get_x_range():
 
 def get_area_range():
     while True:
-        a_input = input("Area : ").strip()
+        a_input = input("Area (a b): ").strip()
         if not a_input: return None, None
         try:
             parts = a_input.replace(',', ' ').split()
