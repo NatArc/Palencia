@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sympy import symbols, sympify, lambdify, diff
+from sympy import symbols, sympify, lambdify, diff, integrate
 
 def format_function(func_str):
     try:
@@ -23,10 +23,9 @@ class Plotter:
         
             x_vals = np.linspace(x_min, x_max, 1000)
             y_vals = func_np(x_vals)
-
             y_vals = np.nan_to_num(y_vals, nan=0.0)
 
-            plt.figure(figsize=(12, 8))
+            fig = plt.figure(figsize=(12, 8))
             plt.plot(x_vals, y_vals, 'red', linewidth=3, label=f'Graph: {func_str}')
             plt.axhline(0, color='white', alpha=0.4)
             plt.axvline(0, color='white', alpha=0.4)
@@ -35,6 +34,27 @@ class Plotter:
             plt.xlabel('X-axis', fontsize=14, color='white')
             plt.ylabel('Y-values', fontsize=14, color='white')
             plt.legend()
+            
+            # Add calculations at bottom
+            max_y = np.max(np.abs(y_vals))
+            min_y = np.min(np.abs(y_vals))
+            total_range = x_max - x_min
+            
+            calc_text = f"""
+f(x) = {format_function(func_str)}
+f'(x) = {format_function(str(diff(sympify(func_str), self.x_sym)))}
+∫f(x)dx = {format_function(str(integrate(sympify(func_str), self.x_sym)))}
+
+Calculations:
+- Max |f(x)|: {max_y:.3f}
+- Min |f(x)|: {min_y:.3f}
+- X-range: {total_range:.1f} units
+- Points: {len(x_vals):,}
+            """
+            fig.text(0.02, 0.02, calc_text, fontsize=11, color='cyan',
+                    verticalalignment='bottom', fontfamily='monospace',
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor='black', alpha=0.8))
+            
             plt.tight_layout()
             plt.show()
 
@@ -60,9 +80,7 @@ class Derivative:
         try:
             func_sym = sympify(func_str)
             deriv_sym = diff(func_sym, self.x_sym)
-
-            pretty_f = str(func_sym)
-            pretty_df = str(deriv_sym)
+            integ_sym = integrate(func_sym, self.x_sym)
 
             func_np = lambdify(self.x_sym, func_sym, modules=['numpy'])
             
@@ -74,8 +92,9 @@ class Derivative:
             y_deriv = np.nan_to_num(y_deriv, nan=0.0)
             
             area_deriv = np.trapezoid(np.abs(y_deriv), x_vals)
+            max_deriv = np.max(np.abs(y_deriv))
 
-            plt.figure(figsize=(12, 8))
+            fig = plt.figure(figsize=(12, 8))
 
             plt.plot(x_vals, y_vals, 'red', linewidth=3, label='Original Function')
             plt.plot(x_vals, y_deriv, 'green', linewidth=3, label="Derivation")
@@ -84,15 +103,27 @@ class Derivative:
             plt.axvline(0, color='white', alpha=0.4)
             plt.grid(True, alpha=0.3)
 
-            plt.title(
-                f"Function | Derivation | Area ≈ {area_deriv:.3f}",
-                fontsize=13, color='white'
-            )
-
             plt.xlabel('X-axis', color='white')
             plt.ylabel('Values', color='white')
-
             plt.legend()
+
+            # Add calculations at bottom
+            calc_text = f"""
+f(x) = {format_function(func_str)}
+f'(x) = {format_function(str(deriv_sym))}
+∫f(x)dx = {format_function(str(integ_sym))}
+
+f'(x) Calculations:
+- Max |f'(x)|: {max_deriv:.3f}
+- |f'(x)| Area: {area_deriv:.3f}
+- X-range: [{x_min:.1f}, {x_max:.1f}]
+- Points: {len(x_vals):,}
+            """
+            fig.text(0.02, 0.02, calc_text, fontsize=11, color='cyan',
+                    verticalalignment='bottom', fontfamily='monospace',
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor='black', alpha=0.8))
+
+            plt.title(f"Function | Derivation | Area ≈ {area_deriv:.3f}", fontsize=13, color='white')
             plt.tight_layout()
             plt.show()
 
@@ -121,6 +152,9 @@ class Integral:
     def plot_with_integral(self, func_str, x_min=-10, x_max=10):
         try:
             func_sym = sympify(func_str)
+            deriv_sym = diff(func_sym, self.x_sym)
+            integ_sym = integrate(func_sym, self.x_sym)
+            
             func_np = lambdify(self.x_sym, func_sym, modules=['numpy'])
             
             x_vals = np.linspace(x_min, x_max, 1000)
@@ -130,12 +164,13 @@ class Integral:
             y_vals = np.nan_to_num(y_vals, nan=0.0)
             y_integral = np.nan_to_num(y_integral, nan=0.0)
             
-            plt.figure(figsize=(12, 8))
+            fig = plt.figure(figsize=(12, 8))
 
             plt.plot(x_vals, y_vals, 'red', linewidth=3, label='Function')
             plt.plot(x_vals, y_integral, 'blue', linewidth=3, label='Integration')
 
             total_area = y_integral[-1] - y_integral[0]
+            max_integral = np.max(np.abs(y_integral))
 
             plt.fill_between(x_vals, 0, y_vals, alpha=0.2, color='red')
 
@@ -143,18 +178,30 @@ class Integral:
             plt.axvline(0, color='white', alpha=0.4)
             plt.grid(True, alpha=0.3)
 
-            pretty = format_function(func_str)
-            plt.title(f"Function + Integration | Total = {total_area:.3f}", color='white')
-
             plt.xlabel('X-axis', color='white')
             plt.ylabel('Values', color='white')
-
             plt.legend()
+
+            # Add calculations at bottom
+            calc_text = f"""
+f(x) = {format_function(func_str)}
+f'(x) = {format_function(str(deriv_sym))}
+∫f(x)dx = {format_function(str(integ_sym))}
+
+∫f(x) Calculations:
+- Total ∫f(x): {total_area:.4f}
+- Max |∫f(x)|: {max_integral:.3f}
+- X-range: [{x_min:.1f}, {x_max:.1f}]
+- Points: {len(x_vals):,}
+            """
+            fig.text(0.02, 0.02, calc_text, fontsize=11, color='cyan',
+                    verticalalignment='bottom', fontfamily='monospace',
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor='black', alpha=0.8))
+
+            plt.title(f"Function + Integration | Total = {total_area:.3f}", color='white')
             plt.tight_layout()
             plt.show()
             
-            print(f"Total integration from {x_min} to {x_max}: {total_area:.4f}")
-
         except Exception as e:
             print(f"Error: {e}")
 
@@ -193,6 +240,9 @@ class Visualization:
     def plot_all_with_areas(self, func_str, x_min=-10, x_max=10, a=None, b=None):
         try:
             func_sym = sympify(func_str)
+            deriv_sym = diff(func_sym, self.x_sym)
+            integ_sym = integrate(func_sym, self.x_sym)
+            
             func_np = lambdify(self.x_sym, func_sym, modules=['numpy'])
             
             x_vals = np.linspace(x_min, x_max, 1000)
@@ -204,13 +254,24 @@ class Visualization:
             f_prime = np.nan_to_num(f_prime, nan=0.0)
             f_int = np.nan_to_num(f_int, nan=0.0)
             
-            plt.figure(figsize=(14, 8))
+            fig = plt.figure(figsize=(14, 8))
 
             plt.plot(x_vals, f_x, 'red', linewidth=3, label='Function')
             plt.plot(x_vals, f_prime, 'green', linewidth=3, label="Differentiation")
             plt.plot(x_vals, f_int, 'blue', linewidth=3, label='Integration')
 
-            title_text = "Function, Differentiation, Integration"
+            calc_lines = [
+                f"f(x) = {format_function(func_str)}",
+                f"f'(x) = {format_function(str(deriv_sym))}",
+                f"∫f(x)dx = {format_function(str(integ_sym))}",
+                "",
+                "Calculations:",
+                f"• X-range: [{x_min:.1f}, {x_max:.1f}]",
+                f"• Points: {len(x_vals):,}",
+                f"• Max |f(x)|: {np.max(np.abs(f_x)):.3f}",
+                f"• Max |f'(x)|: {np.max(np.abs(f_prime)):.3f}",
+                f"• Max |∫f(x)|: {np.max(np.abs(f_int)):.3f}"
+            ]
 
             if a is not None and b is not None:
                 mask = (x_vals >= a) & (x_vals <= b)
@@ -226,19 +287,21 @@ class Visualization:
                 plt.axvline(a, color='white', linestyle='--', alpha=0.6)
                 plt.axvline(b, color='white', linestyle='--', alpha=0.6)
 
-                pretty = format_function(func_str)
+                calc_lines.extend([
+                    "",
+                    f"Interval [{a:.1f}, {b:.1f}]:",
+                    f"• f(x) Area:     {area_f:.4f}",
+                    f"• |f'(x)| Area:  {area_p:.4f}",
+                    f"• ∫f(x):         {area_i:.4f}"
+                ])
 
                 title_text = (
                     f"Function Area={area_f:.3f} | "
                     f"Differentiation Area={area_p:.3f} | "
                     f"Integration Area={area_i:.3f}"
                 )
-
-                print("\nArea Summary:")
-                print(f" Interval [{a}, {b}]:")
-                print(f"   Function:            {area_f:.4f}")
-                print(f"   Differentiation:     {area_p:.4f}")
-                print(f"   Integration:         {area_i:.4f}")
+            else:
+                title_text = "Function, Differentiation, Integration"
 
             plt.axhline(0, color='white', alpha=0.3)
             plt.axvline(0, color='white', alpha=0.3)
@@ -247,8 +310,14 @@ class Visualization:
             plt.title(title_text, fontsize=13, color='white')
             plt.xlabel('X-axis', color='white')
             plt.ylabel('Y-values', color='white')
-
             plt.legend()
+
+            # Add calculations at bottom
+            calc_text = "\n".join(calc_lines)
+            fig.text(0.02, 0.02, calc_text, fontsize=11, color='cyan',
+                    verticalalignment='bottom', fontfamily='monospace',
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor='black', alpha=0.8))
+
             plt.tight_layout()
             plt.show()
 
@@ -320,4 +389,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
