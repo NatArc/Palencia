@@ -294,7 +294,7 @@ def main():
     visual = Visualization()
     
     while True:
-        choice = input("\nChoose (1/2/3/4/0): ").strip()
+        choice = input("\nChoose (1/2/3/4/5): ").strip()
         
         if choice == '5':
             print("You Exited")
@@ -317,7 +317,7 @@ def main():
             a, b = get_area_range()
             visual.plot_all_with_areas(func, x_min, x_max, a, b)
         else:
-            print("1,2,3,4 or 0")
+            print("1,2,3,4 or 5")
 
 if __name__ == "__main__":
     main()
