@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sympy import symbols, sympify, lambdify, diff
@@ -159,8 +160,8 @@ class Integral:
             print(f"Error: {e}")
 
 
-# ===================== areas =====================
-class Areas:
+# ===================== visual =====================
+class Visualization:
     def __init__(self):
         self.x_sym = symbols('x')
         plt.style.use('grayscale')
@@ -207,10 +208,10 @@ class Areas:
             plt.figure(figsize=(14, 8))
 
             plt.plot(x_vals, f_x, 'red', linewidth=3, label='Function')
-            plt.plot(x_vals, f_prime, 'green', linewidth=3, label="Derivation")
+            plt.plot(x_vals, f_prime, 'green', linewidth=3, label="Differentiation")
             plt.plot(x_vals, f_int, 'blue', linewidth=3, label='Integration')
 
-            title_text = "Function, Derivation, Integration"
+            title_text = "Function, Differentiation, Integration"
 
             if a is not None and b is not None:
                 mask = (x_vals >= a) & (x_vals <= b)
@@ -230,15 +231,15 @@ class Areas:
 
                 title_text = (
                     f"Function Area={area_f:.3f} | "
-                    f"Derivation Area={area_p:.3f} | "
+                    f"Differentiation Area={area_p:.3f} | "
                     f"Integration Area={area_i:.3f}"
                 )
 
                 print("\nArea Summary:")
                 print(f" Interval [{a}, {b}]:")
-                print(f"   Function:  {area_f:.4f}")
-                print(f"   Derivation:     {area_p:.4f}")
-                print(f"   Integration:     {area_i:.4f}")
+                print(f"   Function:            {area_f:.4f}")
+                print(f"   Differentiation:     {area_p:.4f}")
+                print(f"   Integration:         {area_i:.4f}")
 
             plt.axhline(0, color='white', alpha=0.3)
             plt.axvline(0, color='white', alpha=0.3)
@@ -290,7 +291,7 @@ def main():
     plotter = Plotter()
     deriv = Derivative()
     integ = Integral()
-    areas = Areas()
+    visual = Visualization()
     
     while True:
         choice = input("\nChoose (1/2/3/4/0): ").strip()
@@ -314,7 +315,7 @@ def main():
             integ.plot_with_integral(func, x_min, x_max)
         elif choice == '4':
             a, b = get_area_range()
-            areas.plot_all_with_areas(func, x_min, x_max, a, b)
+            visual.plot_all_with_areas(func, x_min, x_max, a, b)
         else:
             print("1,2,3,4 or 0")
 
